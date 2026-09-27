@@ -4,7 +4,7 @@ import logging
 import base64
 
 
-BOT_TOKEN = '7353196699:AAG8KiNUIgeuQe1JwYsc5P1FOFYoS1JSHSA'
+BOT_TOKEN = ''
 
 # Настройки OpenAI
 # OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
@@ -17,8 +17,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-client_id = "019abc81-6ca8-7628-89ac-32bf31606472"
-client_secret = "7efab00d-2d84-4d16-ab0d-7a36ce9df3e0"
+client_id = ""
+client_secret = ""
 
 # Создаем строку для кодирования
 credentials = f"{client_id}:{client_secret}"
