@@ -4,6 +4,10 @@ from langchain_core.messages import HumanMessage
 from config import GIGACHAT_TOKEN, GIGACHAT_SCOPE, GIGACHAT_MODEL, logger
 from user_data import get_user_data
 import random
+import uuid
+import requests
+import json
+# from gigachat import Gigachat
 import asyncio
 
 
@@ -34,6 +38,40 @@ class GigaChatClient:
 # Создаем глобальный экземпляр клиента
 giga_client = GigaChatClient()
 
+# функция для получения токена
+def get_gigachat_token():
+    url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+
+    payload={
+      'scope': 'GIGACHAT_API_PERS',
+        'grant_type':'client_credentials'
+    }
+
+    headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+      'RqUID': str(uuid.uuid4()),
+      'Authorization': f'Basic {AI_TOKEN}'
+    }
+    try:
+        response = requests.post(url, headers=headers, data=payload, verify=True)
+        response.raise_for_status()
+        token_data = response.json()
+        return token_data['access_token']
+
+    except requests.exceptions.RequestException as e:
+        print(f"Ошибка получения токена: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Статус код: {e.response.status_code}")
+            print(f"Текст ответа: {e.response.text}")
+        return None
+
+async def ai_fitness_coach(user_message, user_id=None, function_type = None):
+    access_token = get_gigachat_token()
+    if not access_token:
+        return "Ошибка подключения к GigaChat API"
+    client = OpenAI(base_url=OPENAI_BASE_URL,
+                    api_key=access_token)
 
 async def ai_fitness_coach(user_message, user_id=None, function_type=None):
     """Основная функция для взаимодействия с GigaChat"""
@@ -42,6 +80,8 @@ async def ai_fitness_coach(user_message, user_id=None, function_type=None):
     goals = user_context.get('goals', ['стать сильнее'])
 
     if function_type is None:
+        function_type = detect_function_type(user_message);
+
         function_type = detect_function_type(user_message)
     
     function_instructions = {
@@ -75,7 +115,7 @@ async def ai_fitness_coach(user_message, user_id=None, function_type=None):
             return get_fallback_response(function_type)
             
     except Exception as e:
-        logger.error(f"Ошибка AI: {e}")
+        logger.error(f"Ошибка GigaChat API: {e}")
         return get_fallback_response(function_type)
 
 
