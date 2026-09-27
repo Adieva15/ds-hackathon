@@ -21,7 +21,8 @@ Spovatar - это интеллектуальный Telegram-бот, которы
 
 - Python 3.8 или выше
 - Аккаунт в Telegram
-- API-ключ от OpenRouter
+- Учетные данные GigaChat API (получаются на [developers.sber.rul
+(https://developers.sber.ru/))
 
 ### 1. Клонирование репозитория
 
@@ -36,11 +37,6 @@ cd ds
 pip install -r requirements.txt
 ```
 
-Если файла requirements.txt нет, установите зависимости вручную:
-
-```bash
-pip install python-telegram-bot openai
-```
 
 ## Настройка
 
@@ -52,10 +48,13 @@ pip install python-telegram-bot openai
 3. Следуйте инструкциям и получите токен
 4. Сохраните токен - он понадобится позже
 
-#### OpenRouter API Key
-1. Зарегистрируйтесь на [OpenRouter](https://openrouter.ai/)
-2. Получите API-ключ в личном кабинете
-3. Ключ будет выглядеть как `sk-xxxxxxxxxxxxxxxx`
+
+#### Получите доступ к GigaChat API
+
+1. Зарегистрируйтесь на Sber Developers
+2. Создайте новое приложение в разделе GigaChat API
+3. сгенерируйте токен
+4. Выберите нужный тарифный план (доступны бесплатные варианты)
 
 ### 2. Настройка конфигурации
 
@@ -68,12 +67,17 @@ import os
 # Токен бота от BotFather
 BOT_TOKEN = 'ваш_telegram_bot_token_здесь'
 
-# Токен для OpenRouter API
-AI_TOKEN = 'ваш_openrouter_api_ключ_здесь'
+# GigaChat API настройки
+GIGACHAT_TOKEN = {
+    "client_id": "ВАШ_CLIENT_ID_ЗДЕСЬ",
+    "client_secret": "ВАШ_CLIENT_SECRET_ЗДЕСЬ"
+}
+# Или используйте готовый токен:
+# GIGACHAT_TOKEN = "ВАШ_ACCESS_TOKEN_ЗДЕСЬ"
 
-# Настройки OpenAI
-OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
-OPENAI_MODEL = "x-ai/grok-4.1-fast:free"
+GIGACHAT_SCOPE = "GIGACHAT_API_PERS"  # Область доступа
+GIGACHAT_MODEL = "GigaChat-2-Max"     # Модель GigaChat
+
 
 # Настройки логирования
 import logging
@@ -82,6 +86,16 @@ logger = logging.getLogger(__name__)
 ```
 
 Важно: Никогда не публикуйте свои токены в открытом доступе!
+
+
+### 3.Инициализация базы данных
+
+Перед запуском кода необходимо иметь базу данных, а именно запустить файл 
+init_database.py, который запишет в бд необходимую информацию о пользователе для работы с чат-ботом
+
+```bash
+python init_database.py
+```
 
 ## Запуск
 
@@ -161,8 +175,8 @@ spovatar-bot/
 ### Используемые технологии
 
 - **python-telegram-bot** - работа с Telegram API
-- **OpenAI API через OpenRouter** - искусственный интеллект
-- **Grok-4.1-fast** - языковая модель для генерации ответов
+- **sbercloud gigachat** - искусственный интеллект
+- **GigaChat-2-Max** - языковая модель для генерации ответов
 - **Logging** - система логирования для отладки
 
 ### Хранение данных
@@ -178,7 +192,7 @@ spovatar-bot/
 - Убедитесь, что токен не содержит лишних пробелов
 
 **Ошибка: "API key invalid"**
-- Проверьте AI_TOKEN от OpenRouter
+- Проверьте GIGACHAT_TOKEN
 - Убедитесь, что на счету есть доступные запросы
 
 **Бот не отвечает**
@@ -203,13 +217,5 @@ logging.basicConfig(level=logging.DEBUG)
 3. Закоммитьте изменения (`git commit -m 'Add amazing feature'`)
 4. Запушьте ветку (`git push origin feature/amazing-feature`)
 5. Откройте Pull Request
-
-## Поддержка
-
-Если у вас есть вопросы или предложения:
-
-1. Откройте [Issue](https://github.com/Adieva15/ds/issues)
-2. Напишите в Telegram: [@dineadi]
-3. Email: adievadine@gmail.com
 
 ---

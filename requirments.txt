@@ -2,3 +2,7 @@ python-telegram-bot
 openai
 requests
 uuid
+langchain-gigachat
+langchain-core
+sqlalchemy
+flask

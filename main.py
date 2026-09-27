@@ -1,14 +1,23 @@
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
-from config import BOT_TOKEN, logger
+from telegram.ext import  Application, CommandHandler, ContextTypes, MessageHandler, filters
+from config import BOT_TOKEN, logger, WEB_APP_URL
 from handlers import (
     start, handle_help, handle_workout, handle_progress,
     handle_advice, handle_motivation, handle_goal, handle_message
 )
+from telegram import Update, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
+async def web_app_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = InlineKeyboardMarkup([[
+        InlineKeyboardButton("Открыть тренера", web_app=WebAppInfo(url=WEB_APP_URL))
+    ]])
+    await update.message.reply_text("Запусти мини-приложение:", reply_markup=keyboard)
+
+
 def setup_handlers(application):
     """Настройка всех обработчиков"""
     # Команды
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('help', handle_help))
+    application.add_handler(CommandHandler('app', web_app_handler))
 
     # Обработчики кнопок
     application.add_handler(MessageHandler(filters.Regex('^🏋️ Записал тренировку$'), handle_workout))
